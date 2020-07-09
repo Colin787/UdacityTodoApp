@@ -2,10 +2,18 @@
 <html>
 <head>
 	<title>Todo APP</title>
+
+	<!-- CONNECTING JQUERY SO I CAN START SENDING REQUESTS THROUGH AJAX -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<style type="text/css">
+		.hidden{
+			display: none;
+		}
+	</style>
 </head>
 <body>
 	
-	<form action="/todos/create" method="post">
+	<form id="form">
 		<div>
 			<label for="name">Create a To-Do Item</label>
 			<input type="text" id="description" name="description">
@@ -14,12 +22,38 @@
 			<input type="submit" id="submit" value="Create"/>
 		</div>
 	</form>
-
+	<div id="error" style="display:none;" class="hidden">Something Went Wrong!!!!</div>
 	<ul>
 		{% for d in data %}
 		<li>{{d.description}}</li>
 		{% endfor %}
 	</ul>
 	
+	<script type="text/javascript">
+		document.getElementById('form').onsubmit = function(e) {
+			e.preventDefault();
+			fetch('/todos/create', {
+				method: 'Post',
+				body: JSON.stringify({
+					'description': document.getElementById('description').value 
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+			.then(function(response){
+				return response.json{};
+			}
+			.then(function(jsonResponse){
+				console.log(jsonResponse);
+				const liItem = document.createElement('LI');
+				document.getElementById('todos').appendChild(liItem);
+				document.getElementById('error').className = 'hidden';
+			})
+			.catch(function(){
+				document.getElementById('error').className = '';
+			})
+		}
+	</script>
 </body>
 </html>
