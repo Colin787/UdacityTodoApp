@@ -47,6 +47,7 @@
 			.then(function(jsonResponse){
 				console.log(jsonResponse);
 				const liItem = document.createElement('LI');
+				liItem.innerHTML = jsonResponse['description'];
 				document.getElementById('todos').appendChild(liItem);
 				document.getElementById('error').className = 'hidden';
 			})
