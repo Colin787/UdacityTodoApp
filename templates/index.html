@@ -23,7 +23,7 @@
 		</div>
 	</form>
 	<div id="error" style="display:none;" class="hidden">Something Went Wrong!!!!</div>
-	<ul>
+	<ul id="todos">
 		{% for d in data %}
 		<li>{{d.description}}</li>
 		{% endfor %}
@@ -42,8 +42,8 @@
 				}
 			})
 			.then(function(response){
-				return response.json{};
-			}
+				return response.json();
+			})
 			.then(function(jsonResponse){
 				console.log(jsonResponse);
 				const liItem = document.createElement('LI');
