@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 import sys
 
+from flask_migrate import Migrate
+
 #set app equal to the filename! app.py is app
 app = Flask(__name__)
 
@@ -16,6 +18,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #in a way initializing SQLALCHEMY in my application allowing for db.session commands ro be run
 db = SQLAlchemy(app)
 
+migrate = Migrate(app, db)
+
 #class/model for Todo table
 class Todo(db.Model):
 	__tablename__ = 'todos'
@@ -25,7 +29,7 @@ class Todo(db.Model):
 	def __repr__(self):
 		return f'<Todo {self.id} {self.description}>'
 #using SQLALCHEMY I create Todo model with below function 
-db.create_all()
+#db.create_all()
 
 #setting the default route names index and using Flasks render_template to view HTML on teh client side
 #also note the data attribute and how its using SQLALCHEMY to query.all() = select * from Todo;
