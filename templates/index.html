@@ -2,9 +2,11 @@
 <html>
 <head>
 	<title>Todo APP</title>
-
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<!-- CONNECTING JQUERY SO I CAN START SENDING REQUESTS THROUGH AJAX -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<style src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" type="text/css"></style>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 	<style type="text/css">
 		.hidden{
 			display: none;
@@ -13,25 +15,53 @@
 			list-style: none;
 			padding: 0;
 			margin: 0;
+			width: 150px;
+		}
+		li {
+			clear: both;
+		}
+		.delete_todo {
+			-webkit-appearance: none;
+			border: none;
+			outline: none;
+			color: red;
+			float: right;
+			cursor: pointer;
+			font-size: 1.2em;
+		}
+		.main-div {
+			width: 40%;
+			
+		}
+		.list-div {
+			float: left;
 		}
 	</style>
 </head>
-<body>
-	
-	<form id="form">
+<body class="container">	
+	<div class="main-div">
+		<form id="form">
 		<div>
 			<label for="name">Create a To-Do Item</label>
-			<input type="text" id="description" name="description">
-		
+			<br>
+			<input type="text" id="description" name="description">		
 			<input type="submit" id="submit" value="Create"/>
 		</div>
-	</form>
-	<div id="error" style="display:none;" class="hidden">Something Went Wrong!!!!</div>
-	<ul id="todos">
-		{% for d in data %}
-		<li><input class="check-completed" data-id="{{ d.id }}" type="checkbox" {% if d.completed %} checked {% endif %}>{{d.description}}</li>
-		{% endfor %}
-	</ul>
+		</form>
+		<br>
+		<div id="error" style="display:none;" class="hidden">Something Went Wrong!!!!</div>
+		<div class="list-div">
+			<ul id="todos">
+				{% for d in data %}
+				<li>
+					<input class="check-completed" data-id="{{ d.id }}" type="checkbox" {% if d.completed %} checked {% endif %}>
+					{{d.description}}
+					<button data-id="{{ d.id }}" class="delete_todo">&cross;</button> 
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
 	
 	<script type="text/javascript">
 		const checkboxes = document.querySelectorAll('.check-completed')
