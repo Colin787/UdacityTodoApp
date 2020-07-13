@@ -9,6 +9,11 @@
 		.hidden{
 			display: none;
 		}
+		ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
 	</style>
 </head>
 <body>
@@ -17,23 +22,48 @@
 		<div>
 			<label for="name">Create a To-Do Item</label>
 			<input type="text" id="description" name="description">
-		</div>
-		<div>
+		
 			<input type="submit" id="submit" value="Create"/>
 		</div>
 	</form>
 	<div id="error" style="display:none;" class="hidden">Something Went Wrong!!!!</div>
 	<ul id="todos">
 		{% for d in data %}
-		<li>{{d.description}}</li>
+		<li><input class="check-completed" data-id="{{ d.id }}" type="checkbox" {% if d.completed %} checked {% endif %}>{{d.description}}</li>
 		{% endfor %}
 	</ul>
 	
 	<script type="text/javascript">
+		const checkboxes = document.querySelectorAll('.check-completed')
+
+		for(let i =0; i < checkboxes.length; i++) {
+			const checkbox = checkboxes[i];
+			checkbox.onchange = function(e) {
+				const newCompleted = e.target.checked;
+				const todoId = e.target.dataset['id'];
+				//console.log('event', e,)
+				fetch('/todos/' + todoId + 'set-completed', {
+					method: 'POST',
+					body: JSON.stringify({
+						'completed': newCompleted
+					}),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				})
+				.then(function() {
+					document.getElementById('error').className = 'hidden';
+				})
+				.catch(function() {
+					document.getElementById('error').className = '';
+				})
+			};
+		}
+
 		document.getElementById('form').onsubmit = function(e) {
 			e.preventDefault();
 			fetch('/todos/create', {
-				method: 'Post',
+				method: 'POST',
 				body: JSON.stringify({
 					'description': document.getElementById('description').value 
 				}),
@@ -41,17 +71,17 @@
 					'Content-Type': 'application/json'
 				}
 			})
-			.then(function(response){
+			.then(function(response) {
 				return response.json();
 			})
-			.then(function(jsonResponse){
+			.then(function(jsonResponse) {
 				console.log(jsonResponse);
 				const liItem = document.createElement('LI');
 				liItem.innerHTML = jsonResponse['description'];
 				document.getElementById('todos').appendChild(liItem);
 				document.getElementById('error').className = 'hidden';
 			})
-			.catch(function(){
+			.catch(function() {
 				document.getElementById('error').className = '';
 			})
 		}

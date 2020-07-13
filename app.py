@@ -37,7 +37,7 @@ class Todo(db.Model):
 #also note the data attribute and how its using SQLALCHEMY to query.all() = select * from Todo;
 @app.route('/')
 def index():
-	return render_template('index.html', data=Todo.query.all())
+	return render_template('index.html', data=Todo.query.order_by('id').all())
 
 #setting a route for the creation of our Todo
 #notice the route name.. this is nomenclature for this type of application
@@ -59,6 +59,20 @@ def create_todo():
 		db.session.close()
 	if not error:
 		return jsonify(body)
-			
+
+
+
+@app.route('/todos/<todo_id>set-completed', methods=['POST'])
+def set_completed_todo(todo_id):
+	try:
+		completed = request.get_json()['completed']
+		todo = Todo.query.get(todo_id)
+		todo.completed = completed
+		db.session.commit()
+	except:
+		db.session.rollback()
+	finally:
+		db.session.close()
+	return redirect(url_for('index'))
 		
 
