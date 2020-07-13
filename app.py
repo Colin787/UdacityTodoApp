@@ -3,8 +3,9 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 #Importing SQLALCHEMY for all our db.X.X commands and X.query.X 
 from flask_sqlalchemy import SQLAlchemy
 
-import sys
+#import sys
 
+#Helper for migrating in flask command line style
 from flask_migrate import Migrate
 
 #set app equal to the filename! app.py is app
@@ -27,11 +28,18 @@ class Todo(db.Model):
 	description = db.Column(db.String(), nullable=False)
 	completed = db.Column(db.Boolean, nullable=False, default=False)
 	important = db.Column(db.Boolean, nullable=False, default=True)
+	list_id = db.Column(db.Integer, db.ForeignKey('todolists.id'), nullable=False)
+	
 
 	def __repr__(self):
 		return f'<Todo {self.id} {self.description}>'
-#using SQLALCHEMY I create Todo model with below function 
-#db.create_all()
+
+#class/model for Todo lists table
+class TodoList(db.Model):
+	__tablename__ = 'todolists'
+	id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String(), nullable=False)
+	todos = db.relationship('Todo', backref='list', lazy=True)
 
 #setting the default route names index and using Flasks render_template to view HTML on teh client side
 #also note the data attribute and how its using SQLALCHEMY to query.all() = select * from Todo;
@@ -54,7 +62,7 @@ def create_todo():
 	except:
 		error = True
 		db.session.rollback()
-		print(sys.exc_info())
+		#print(sys.exc_info())
 	finally:
 		db.session.close()
 	if not error:
